@@ -2,21 +2,12 @@ package com.edu.ulab.app.storage;
 
 import com.edu.ulab.app.entity.DistributedEntity;
 import com.edu.ulab.app.exception.NotFoundException;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Slf4j
 public abstract class Storage<T extends DistributedEntity> implements CrudMemoryRepository<T> {
-    //todo создать хранилище в котором будут содержаться данные
-    // сделать абстракции через которые можно будет производить операции с хранилищем
-    // продумать логику поиска и сохранения
-    // продумать возможные ошибки
-    // учесть, что при сохранеии юзера или книги, должен генерироваться идентификатор
-    // продумать что у узера может быть много книг и нужно создать эту связь
-    // так же учесть, что методы хранилища принимают друго тип данных - учесть это в абстракции
 
     private final Map<Long, T> data = new ConcurrentHashMap<>();
 
@@ -49,6 +40,11 @@ public abstract class Storage<T extends DistributedEntity> implements CrudMemory
     @Override
     public void deleteById(Long id) {
         data.remove(id);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return data.get(id) != null;
     }
 
     public Long nextLongIdentifier() {

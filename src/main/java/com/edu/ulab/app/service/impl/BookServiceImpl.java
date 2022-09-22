@@ -2,9 +2,10 @@ package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.entity.Book;
+import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.service.BookService;
-import com.edu.ulab.app.storage.BookStorage;
+import com.edu.ulab.app.storage.impl.BookStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,32 +22,44 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto createBook(BookDto bookDto) {
-        Book book = new Book();
+        log.info("Got book create request: {}", bookDto);
 
-        book.setTitle(bookDto.getTitle());
-        book.setAuthor(bookDto.getAuthor());
-        book.setPageCount(bookDto.getPageCount());
-        book.setUserId(bookDto.getUserId());
+        Book book = bookMapper.bookDtoToBook(bookDto);
+        log.info("Mapped bookDto: {}", bookDto);
 
-        return bookMapper.bookToBookDto(bookStorage.save(book));
+        Book saveBook = bookStorage.save(book);
+        log.info("Save book: {}", saveBook);
+
+        return bookMapper.bookToBookDto(saveBook);
     }
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-        Book book = new Book();
+        log.info("Got book update request: {}", bookDto);
 
-        book.setId(bookDto.getId());
-        book.setTitle(bookDto.getTitle());
-        book.setAuthor(bookDto.getAuthor());
-        book.setPageCount(bookDto.getPageCount());
-        book.setUserId(bookDto.getUserId());
+        Book book = bookMapper.bookDtoToBook(bookDto);
+        log.info("Mapped bookDto: {}", bookDto);
 
-        return bookMapper.bookToBookDto(bookStorage.update(book));
+        Book updateBook = bookStorage.update(book);
+        log.info("Update book: {}", updateBook);
+
+        return bookMapper.bookToBookDto(updateBook);
     }
 
     @Override
     public BookDto getBookById(Long id) {
-        return bookMapper.bookToBookDto(bookStorage.findById(id));
+        log.info("Got book get book with id: {}", id);
+
+        Book book;
+        log.info("Check book in database which  id: {}", id);
+        if (bookStorage.existsById(id)) {
+            book = bookStorage.findById(id);
+            log.info("Get book: {}", book);
+        } else {
+            throw new NotFoundException("No book with id: " + id);
+        }
+
+        return bookMapper.bookToBookDto(book);
     }
 
     @Override
@@ -59,6 +72,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBookById(Long id) {
-        bookStorage.deleteById(id);
+        log.info("Got user delete book with id : {}", id);
+
+        log.info("Check book in database which  id: {}", id);
+        if (bookStorage.existsById(id)) {
+            bookStorage.deleteById(id);
+            log.info("Delete book with id: {}", id);
+        } else {
+            throw new NotFoundException("No book with id: " + id);
+        }
     }
 }

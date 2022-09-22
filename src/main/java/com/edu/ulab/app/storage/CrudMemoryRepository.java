@@ -2,7 +2,7 @@ package com.edu.ulab.app.storage;
 
 import java.util.List;
 
-public interface CrudMemoryRepository<T> extends MemoryStorage<T> {
+public interface CrudMemoryRepository<T> {
 
     T save(T entity);
 
@@ -13,4 +13,6 @@ public interface CrudMemoryRepository<T> extends MemoryStorage<T> {
     List<T> findAll();
 
     void deleteById(Long id);
+
+    boolean existsById(Long id);
 }

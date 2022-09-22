@@ -3,7 +3,6 @@ package com.edu.ulab.app.web;
 import com.edu.ulab.app.facade.UserDataFacade;
 import com.edu.ulab.app.web.constant.WebConstant;
 import com.edu.ulab.app.web.request.UserBookRequest;
-import com.edu.ulab.app.web.request.UserBookUpdateRequest;
 import com.edu.ulab.app.web.response.BaseWebResponse;
 import com.edu.ulab.app.web.response.UserBookResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +36,12 @@ public class UserController {
                             responseCode = "200",
                             description = "Successfully retrieved",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UserBookResponse.class)))})
+                                    schema = @Schema(implementation = UserBookResponse.class))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Error: response status is 400",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = BaseWebResponse.class)))})
     public UserBookResponse createUserWithBooks(@RequestBody UserBookRequest request,
                                                 @RequestHeader(RQID) @Pattern(regexp = REQUEST_ID_PATTERN) final String requestId) {
         UserBookResponse response = userDataFacade.createUserWithBooks(request);
@@ -58,7 +62,7 @@ public class UserController {
                             description = "Error: response status is 400",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = BaseWebResponse.class)))})
-    public UserBookResponse updateUserWithBooks(@RequestBody UserBookUpdateRequest request) {
+    public UserBookResponse updateUserWithBooks(@RequestBody UserBookRequest request) {
         UserBookResponse response = userDataFacade.updateUserWithBooks(request);
         log.info("Response with updated user and his books: {}", response);
         return response;

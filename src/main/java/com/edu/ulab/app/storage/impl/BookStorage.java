@@ -1,6 +1,7 @@
-package com.edu.ulab.app.storage;
+package com.edu.ulab.app.storage.impl;
 
 import com.edu.ulab.app.entity.Book;
+import com.edu.ulab.app.storage.Storage;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,5 +32,10 @@ public class BookStorage extends Storage<Book> {
     @Override
     public void deleteById(Long id) {
         super.deleteById(id);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return super.existsById(id);
     }
 }
